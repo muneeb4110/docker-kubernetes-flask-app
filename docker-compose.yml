@@ -1,0 +1,12 @@
+services:
+  web:
+    build:
+      context: .
+      args:
+        APP_VERSION: "1.1.0"
+    image: flask-devops-demo:1.1.0
+    ports:
+      - "5000:5000"
+    environment:
+      APP_ENV: docker-compose
+    restart: unless-stopped
