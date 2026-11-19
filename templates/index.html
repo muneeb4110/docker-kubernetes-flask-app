@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DevOps Demo App</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="hero">
+    <h1>DevOps Demo App</h1>
+    <p>A Flask app running in Docker and Kubernetes</p>
+  </header>
+
+  <main>
+    <!-- Filled in by app.js using the /api/info and /health endpoints -->
+    <section class="cards" aria-label="Server information">
+      <article class="card">
+        <h2>Pod / container</h2>
+        <p class="value" id="hostname">Loading...</p>
+        <p class="hint">The container (Docker) or pod (Kubernetes) that answered this page.</p>
+      </article>
+
+      <article class="card">
+        <h2>Environment</h2>
+        <p class="value" id="environment">Loading...</p>
+        <p class="hint">Comes from the Kubernetes ConfigMap.</p>
+      </article>
+
+      <article class="card">
+        <h2>Version</h2>
+        <p class="value" id="version">Loading...</p>
+        <p class="hint">Comes from the Docker image.</p>
+      </article>
+
+      <article class="card">
+        <h2>Health</h2>
+        <p class="value">
+          <span class="dot" id="health-dot"></span>
+          <span id="health-text">Checking...</span>
+        </p>
+        <p class="hint">Checked every 10 seconds using <code>/health</code>.</p>
+      </article>
+    </section>
+
+    <section class="panel">
+      <h2>Load balancing test</h2>
+      <p>
+        Each click sends many requests. Every bar is one pod and its length is how many
+        requests that pod answered. With 2 or more replicas you should see more than one bar.
+      </p>
+      <div class="actions">
+        <button id="send-10" type="button">Send 10 requests</button>
+        <button id="send-30" type="button" class="secondary">Send 30 requests</button>
+        <button id="reset" type="button" class="ghost">Reset</button>
+      </div>
+      <div id="tally" class="tally" aria-live="polite"></div>
+      <p id="tally-note" class="hint"></p>
+    </section>
+
+    <section class="panel">
+      <h2>How this page works</h2>
+      <ol class="steps">
+        <li>Your browser opens <code>/</code> and Flask returns this HTML page.</li>
+        <li>
+          <code>app.js</code> calls <code>/api/info</code> to ask which pod is answering,
+          and <code>/health</code> to check the app is healthy.
+        </li>
+        <li>
+          In Kubernetes, the Service sends each new request to one of the running pods,
+          so the pod name can change between requests.
+        </li>
+        <li>
+          The version is built into the Docker image, and the environment name comes
+          from the Kubernetes ConfigMap.
+        </li>
+      </ol>
+    </section>
+  </main>
+
+  <footer>Docker &middot; Kubernetes &middot; Flask</footer>
+
+  <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+</body>
+</html>
