@@ -13,3 +13,16 @@ python app.py
 ```
 
 Then open http://localhost:5000
+
+## Run with Docker
+
+```powershell
+docker build --build-arg APP_VERSION=1.1.0 -t flask-devops-demo:1.1.0 .
+docker run --rm -p 5000:5000 flask-devops-demo:1.1.0
+```
+
+## Run with Docker Compose
+
+```powershell
+docker compose up --build
+```
