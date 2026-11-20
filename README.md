@@ -185,3 +185,12 @@ Problems I hit while building this, and how I fixed them:
 kubectl delete namespace devops-demo
 minikube stop
 ```
+
+## What I learned
+
+- **Image vs container.** An image is a read-only blueprint of the app. It contains the code, Python and all the dependencies, and it is built from the Dockerfile. A container is a running instance of an image. One image can start many containers, which is what Kubernetes does when it runs 4 pods from the same image.
+- **Layer caching.** Each Dockerfile instruction creates a layer, and Docker reuses a layer if nothing it depends on has changed. I copy `requirements.txt` and run `pip install` before copying the app code, so a code change does not reinstall every package and builds stay fast.
+- **Deployment, Service and ConfigMap.** A Deployment keeps the desired number of pods running, replaces pods that die, and handles rolling updates and rollbacks. A Service gives the pods one stable address and spreads requests across them, because pod names and IPs change. A ConfigMap keeps settings such as `APP_ENV` outside the image, so the same image can run in different environments.
+- **Zero-downtime rolling updates.** With `maxSurge: 1` and `maxUnavailable: 0`, Kubernetes starts one new pod first and only stops an old pod after the new one passes its readiness probe on `/health`. The Service only sends traffic to ready pods, so the app stays available during the update. `kubectl rollout undo` goes back to the previous version.
+- **Non-root containers and health checks.** Running as a non-root user limits the damage if the app is compromised. `HEALTHCHECK` and Kubernetes probes let Docker and Kubernetes detect an unhealthy app automatically.
+- **Debugging.** A terminal started before an install keeps the old PATH, so `minikube` was not found until I opened a new terminal. `minikube start` timed out on a slow connection and worked when I ran it again, because downloaded files are cached. The node stayed `NotReady` because the `kindnet` network plugin was still pulling its image, and `kubectl get pods -n kube-system` showed the cause.
